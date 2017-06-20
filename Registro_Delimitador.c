@@ -10,19 +10,7 @@
  *   #define LINE_SIZE 500
  */
 
-/* Definição de uma struct capaz de armazenar todos os campos de um registro do arquivo
- * A escolha dos tipos e do tamanho dos vetores foi baseado em uma análise dos dados
- */
-struct registro_delimitador{
-    wchar_t dominio [BUFFER_SIZE]; //O campo "domínio" pode receber wide chars e é de tamanho váriavel, limitado por BUFFER_SIZE
-    char documento [20];            //O campo "documento" espera somente chars padrôes e é de tamanho 19, o vetor recebe um char extra para colocar o caractere terminador, facilitando o manuseamento
-    wchar_t nome [BUFFER_SIZE];     //O campo "nome" pode receber wide chars e é de tamanho váriavel, limitado por BUFFER_SIZE
-    wchar_t uf [BUFFER_SIZE];       //O campo "uf" pode receber wide chars e é de tamanho váriavel, limitado por BUFFER_SIZE
-    wchar_t cidade[BUFFER_SIZE];    //O campo "cidade" pode receber wide chars e é de tamanho váriavel, limitado por BUFFER_SIZE
-    char data_cadastro [20];        //O campo "documento" espera somente chars padrôes e é de tamanho 19, o vetor recebe um char extra para colocar o caractere terminador, facilitando o manuseamento
-    char data_atualiza [20];        //O campo "documento" espera somente chars padrôes e é de tamanho 19, o vetor recebe um char extra para colocar o caractere terminador, facilitando o manuseamento
-    long int ticket;                //O campo "ticket" espera um long int
-    };
+
 
 /*
  * O typedef a seguir foi movido para o .h, mas vou mantê-lo salvo como comentário caso seja útil
