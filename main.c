@@ -1,6 +1,7 @@
 #include "Registro_Delimitador.h"
 #define IBS 1000
 
+// Tobias Mesquita Silva da Veiga - 5268356
 
 // Estrutura de uma chave: contem ticket e offset do registro correspondente
 typedef struct chprim {
@@ -400,7 +401,7 @@ int main() {
 
 	// puts("Indice criado. Imprimindo: ...");
 	// printIndexFile("indice_1.bin");
-	
+
 	puts("status: ...");
 	removerReg(&g[0], 0);
 	showStatus(&g[0]);
