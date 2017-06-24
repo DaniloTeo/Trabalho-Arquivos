@@ -143,6 +143,10 @@ void PrintAll_Delimitador()
     int fieldsize, counter=0;    //Declarando inteiros, fieldsize receberá o valor dos indicadores de tamanho dos campos, counter armazena o RRN do registro atual
     wchar_t nulo[] = {'n', 'u', 'l', 'l', 0};       //String de wide char usada para comparações e escrita no registro r
     char trash[BUFFER_SIZE];        //String de char usada como uma "lixeira" para valores não utilizados
+
+ //    long int trash2;
+	// fread(&trash2, sizeof(long int), 1, saida); // pula o cabecalho
+
     while(fread(r.documento, sizeof(char), 19, saida)!=0)      //lê o primeiro campo do registro, repete até o fim do arquivo
         {
         counter++;      //incrementando rrn
