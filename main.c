@@ -11,11 +11,18 @@
 #define NOA 3 //numero de arquivos de saida gerados
 
 
+void imprime_tabela_all(RemList *a, RemList *b, RemList *c){
+	printf("Numero de registros removidos no arquivo_de_saida_1: %d\n", a->cont);
+	printf("Numero de registros removidos no arquivo_de_saida_2: %d\n", b->cont);
+	printf("Numero de registros removidos no arquivo_de_saida_3: %d\n", c->cont);
+}
+
+
 int main(void){
 	int op = -1;
 	int i, aux;
 	long int t;
-	RemList *l = NULL;
+	RemList *l[3];
 
 	//estabilizacao do padrao da linguagem usada para a manipulacao do arquivo
 	setlocale(LC_ALL, "pt_BR.ISO-8859-1");
@@ -38,7 +45,7 @@ int main(void){
 	readIndex(&g[2], "indice_3.bin");
 
 
-	printf("Voce deseja:\n0 - apagar um registro dos arquivos;\n1 - inserir um registro nos arquivos;\n2 - visualizar estatisticas dos arquivos indice;\n3 - visualizar estatisticas da lista de registros removidos;\n4 - sair.\n");
+	printf("Voce deseja: %dn0 ,- apagar um registro dos arquivos;\n1 - inserir um registro nos arquivos;\n2 - visualizar estatisticas dos arquivos indice;\n3 - visualizar estatisticas da lista de registros removidos;\n4 - sair.\n");
 	scanf("%d", &op);getchar();
 
 	
@@ -71,9 +78,13 @@ int main(void){
 				printf("Digite o arquivo cuja lista de remocao voce deseja analisar(1, 2, ou 3)\n");
 				scanf("%d", &aux);
 				aux--;
-				l = criar_lista(g[aux].file);
-				print_lista(l);
-				apagar_lista(l);
+
+				for(i = 0; i < 3; i++){
+					l[i] = criar_lista(g[i].file);
+				}
+
+				imprime_tabela_all(l[0], l[1], l[2]);
+				print_lista(l[aux]);
 
 
 
@@ -89,7 +100,9 @@ int main(void){
 	//liberacao de memoria
 
 	for(i = 0; i < 3; i++){
+		apagar_lista(l[i]);
 		fclose(g[i].file);
+
 	}
 	
 

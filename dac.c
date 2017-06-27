@@ -16,6 +16,7 @@ RemList *criar_lista(FILE *f){
 	long int prox = 42;
 	n->inicio = NULL;
 	n->fim = NULL;
+	n->cont++;
 	char c;
 
 
@@ -35,6 +36,7 @@ RemList *criar_lista(FILE *f){
 			fread(&prox, sizeof(long int), 1, f); //armazeno o valor do proximo offset sem registro
 			//printf("offset: %-ld\ttamanho: %-ld\tprox: %-ld\n",offset, tamanho, prox);
 			inserir_lista(n, offset, tamanho, prox);
+			n->cont++;
 
 
 		}

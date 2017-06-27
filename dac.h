@@ -37,6 +37,7 @@ typedef struct node{
 typedef struct remlist{
 	Node *inicio;
 	Node *fim;
+	int cont;
 
 }RemList;
 
