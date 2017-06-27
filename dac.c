@@ -12,10 +12,12 @@
 
 RemList *criar_lista(FILE *f){
 	RemList *n = (RemList *) malloc(sizeof(RemList));
-	long int tamanho, offset;
-	long int prox;
+	long int tamanho = 42, offset = 42;
+	long int prox = 42;
 	n->inicio = NULL;
 	n->fim = NULL;
+	char c;
+
 
 	fseek(f, 0, SEEK_SET);
 	fread(&prox, sizeof(long int), 1, f);
@@ -23,13 +25,15 @@ RemList *criar_lista(FILE *f){
 		printf("Nenhum registro removido deste arquivo ainda.\n");
 	}
 	else{
-		while(prox != -1){	
+		while(prox != -1 && (feof(f) == 0)){	
 			
-			fseek(f, prox, SEEK_SET);
-			offset = ftell(f); //guardo o offset atual
-			fread(&tamanho, sizeof(long int), 1, f); //guardo o tamanho do registro que havia aqui
+			fseek(f, prox, SEEK_SET);	
+			offset = prox; //guardo o offset atual
+			fread(&c, sizeof(char), 1, f);
+			//printf("%c\n\n", c);
+			fread(&tamanho, sizeof(int), 1, f); //guardo o tamanho do registro que havia aqui
 			fread(&prox, sizeof(long int), 1, f); //armazeno o valor do proximo offset sem registro
-			printf("offset: %ld\ttamanho: %ld\tprox: %ld\n",offset, tamanho, prox);
+			//printf("offset: %-ld\ttamanho: %-ld\tprox: %-ld\n",offset, tamanho, prox);
 			inserir_lista(n, offset, tamanho, prox);
 
 
@@ -82,10 +86,10 @@ void print_lista(RemList* l){
 	int cont = 0;
 
 	while(aux != NULL){
-		printf("%d|%d-->", aux->offset, aux->tamanho);
+		printf(" %-ld| %-ld| %-ld| -->", aux->offset, aux->tamanho, aux->prox);
 		aux = aux->proximo;
 
-		if(cont % 10 == 0 && cont != 0){
+		if(cont % 5 == 0 && cont != 0){
 			printf("\n");
 		}
 		cont++;
@@ -394,6 +398,7 @@ int removerReg(Group* g, long int ticket) {
     // 3. Pega valor que esta no cacalho e atualiza-o
     long int next_offset = updateHeader(g, ch->offset); // offset do proximo registro removido logicamente
 
+
     // printf("next offset: %ld\n", next_offset);
 
     // 4. Faz a remocao logica
@@ -402,7 +407,7 @@ int removerReg(Group* g, long int ticket) {
  	fwrite(&counter, sizeof(int), 1, g->file); // escrever tamanho do registro removido logicamente
  	fwrite(&next_offset, sizeof(long int), 1, g->file); // escreve offset do proximo registro removido logicamente
 
- 	
+	//printf("counter: %d\nnext_offset: %d\n", counter, next_offset); 	
 
 
  	// puts("removido");
@@ -414,7 +419,8 @@ int removerReg(Group* g, long int ticket) {
  	qsort(g->array, g->length, sizeof(ChPrim), compare); // ordena o array
 
  	// puts("ajustado");
-
+ 	//fflush(g->file);
+ 	//freopen(NULL, "w+b", g->file);
  	return 0;
 }
 

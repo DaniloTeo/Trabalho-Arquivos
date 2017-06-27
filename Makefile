@@ -12,7 +12,7 @@ main.o:
 	gcc -g -c main.c
 
 clean:
-	rm *.o t
+	rm -rf  *.o *.bin t
 
 run:
 	./t
