@@ -64,6 +64,10 @@ int main(void){
 					if(aux == 0) {
 						printf("Removido do arquivo %d com sucesso\n", i);
 					}
+					else{
+						printf("Erro na remoção, fim da execução do programa\n");
+						return 1;
+					}
 				}
 
 				break;
@@ -77,6 +81,13 @@ int main(void){
 				//estatisticas dos registros removidos
 				printf("Digite o arquivo cuja lista de remocao voce deseja analisar(1, 2, ou 3)\n");
 				scanf("%d", &aux);
+				
+				while(aux <= 0){
+					printf("Por favor, digite um valor valido(1, 2, ou 3)\n");
+					scanf("%d", &aux);
+				}
+
+
 				aux--;
 
 				for(i = 0; i < 3; i++){
