@@ -45,7 +45,7 @@ int main(void){
 	readIndex(&g[2], "indice_3.bin");
 
 
-	printf("Voce deseja: %dn0 ,- apagar um registro dos arquivos;\n1 - inserir um registro nos arquivos;\n2 - visualizar estatisticas dos arquivos indice;\n3 - visualizar estatisticas da lista de registros removidos;\n4 - sair.\n");
+	printf("Voce deseja:\n0- apagar um registro dos arquivos;\n1 - inserir um registro nos arquivos;\n2 - visualizar estatisticas dos arquivos indice;\n3 - visualizar estatisticas da lista de registros removidos;\n4 - sair.\n");
 	scanf("%d", &op);getchar();
 
 	
@@ -94,9 +94,11 @@ int main(void){
 					l[i] = criar_lista(g[i].file);
 				}
 
-				imprime_tabela_all(l[0], l[1], l[2]);
-				print_lista(l[aux]);
+				if(l[0]->cont != 0 || l[1]->cont != 0 || l[2]->cont != 0){
+					imprime_tabela_all(l[0], l[1], l[2]);
+				}
 
+				print_lista(l[aux]);
 
 
 				break;
