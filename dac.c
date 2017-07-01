@@ -16,16 +16,16 @@ RemList *criar_lista(FILE *f){
 	long int prox = 42;
 	n->inicio = NULL;
 	n->fim = NULL;
-	n->cont++;
+	n->cont = 0;
 	char c;
 
 
 	fseek(f, 0, SEEK_SET);
 	fread(&prox, sizeof(long int), 1, f);
-	if(prox == -1){
-		printf("Nenhum registro removido deste arquivo ainda.\n");
-	}
-	else{
+	// if(prox == -1){
+	// 	printf("Nenhum registro removido deste arquivo ainda.\n");
+	// }
+	if(prox != -1){
 		while(prox != -1 && (feof(f) == 0)){	
 			
 			fseek(f, prox, SEEK_SET);	
@@ -87,6 +87,11 @@ void print_lista(RemList* l){
 	Node *aux = l->inicio;
 	int cont = 0;
 
+	if(l->cont == 0){
+		printf("Nenhum registro removido deste arquivo ainda.\n");
+		return;
+	}
+
 	while(aux != NULL){
 		printf(" %-ld| %-ld| %-ld| -->", aux->offset, aux->tamanho, aux->prox);
 		aux = aux->proximo;
@@ -94,7 +99,8 @@ void print_lista(RemList* l){
 		if(cont % 5 == 0 && cont != 0){
 			printf("\n");
 		}
-		cont++;
+		// if(aux->prox == -1) printf(" %-ld| %-ld| %-ld| ", aux->offset, aux->tamanho, aux->prox);;
+		// cont++;
 	}
 
 	printf("\n");
