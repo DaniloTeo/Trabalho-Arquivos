@@ -432,6 +432,42 @@ int removerReg(Group* g, long int ticket) {
  	return 0;
 }
 
+int sizeReg(Registro_Delimitador *r){
+        return ((int) wcslen(r->dominio) + (int) wcslen(r->nome) + (int) wcslen(r->uf) + (int) wcslen(r->cidade)) * sizeof(wchar_t) + 84;
+}
+
+void firstFit(Group *g, Registro_Delimitador *r){
+        RemList *rem = criar_lista(g->file);
+        Node *aux = rem->inicio, *aux2 = rem->inicio;
+        int tam_r = sizeReg(r);
+        char breaker = '~';
+
+        printf("---------%d----------\n", tam_r);
+
+        //buscando o node(o espaco removido logicamente) a ser inserido
+        while(aux != NULL && aux->tamanho < tam_r + 9){
+                aux2 = aux;
+                aux = aux->proximo;
+        }
+
+        //se nao ha espacos colocar no fim do arquivo
+        if(aux == NULL){
+                fseek(g->file, 0, SEEK_END);
+                WriteReg_Delimitador(r, g->file);
+
+        }else{//senao colocar no primerio espaco
+                //posicionando para a insercao do registro
+                fseek(g->file, aux->offset + (aux->tamanho - tam_r - 3), SEEK_SET);
+                fwrite(&breaker, sizeof(char), 1, g->file);//escrevendo no delimitador
+                WriteReg_Delimitador(r, g->file);
+        }
+        g->length++;
+        g->array = (ChPrim *) realloc(g->array, g->length * sizeof(ChPrim));
+        g->array[g->length - 1].ticket = r->ticket;
+        g->array[g->length - 1].offset = ftell(g->file) - tam_r;
+        qsort(g->array, g->length, sizeof(ChPrim), compare); // ordena o array
+}
+
 // Pega o indice que estava em disco e coloca em um array.
 void readIndex(Group* g, char* f_name) {
 
