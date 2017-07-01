@@ -84,6 +84,14 @@ int removerReg(Group* g, long int ticket);
 // Pega o indice que estava em disco e coloca em um array.
 void readIndex(Group* g, char* f_name);
 
+//Realiza a insercao de r no arquivo g->file utilizando o metodo first fit, e atualiza g->array(indices) e g->length
+void firstFit(Group *g, Registro_Delimitador *r);
+
+//Realiza a insercao de r no arquivo g->file utilizando o metodo best fit, e atualiza g->array(indices) e g->length
+void bestFit(Group *g, Registro_Delimitador *r);
+
+//Realiza a insercao de r no arquivo g->file utilizando o metodo worst fit, e atualiza g->array(indices) e g->length
+void worstFit(Group *g, Registro_Delimitador *r);
 
 char *readLine(FILE *buffer);
 
