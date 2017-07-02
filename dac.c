@@ -432,7 +432,6 @@ int removerReg(Group* g, long int ticket) {
  	//freopen(NULL, "w+b", g->file);
  	return 0;
 }
-
 //calcula o tamanho em bytes de r
 //65 == soma dos tamanhos dos campos constantes, documento, data_cadastro, data_atualiza
 //4 * sizeof(int) == numero que indica o tamanho dos campos variaveis
@@ -450,9 +449,10 @@ void firstFit(Group *g, Registro_Delimitador *r){
 	
 	int tam_r = sizeReg(r);//tamanho em bytes de r que serao necessarios para a insercao
 	char breaker = '~';//usado para escrever no arquivo antes de escrever r, ao encontrar a posicao de insercao
+	int int_aux;
 
 	//buscando o node(o espaco removido logicamente) a ser inserido
-	while(aux != NULL && aux->tamanho < tam_r){
+	while(aux != NULL && aux->tamanho < tam_r + 13){
 		aux_ant = aux;
 		aux = aux->proximo;
 	}
@@ -471,8 +471,14 @@ void firstFit(Group *g, Registro_Delimitador *r){
 			fwrite(&(aux->proximo->offset), sizeof(long int), 1, g->file);
 		}
 
+		//atualizando o novo tamanho do espaco restante
+		fseek(g->file, aux->offset + 1, SEEK_SET);
+		int_aux = aux->tamanho - tam_r - 1;
+		fwrite(&int_aux, sizeof(int), 1, g->file);
+		
 		//posicionando para a insercao do registro
 		fseek(g->file, aux->offset + (aux->tamanho - tam_r - 1), SEEK_SET);
+		
 		fwrite(&breaker, sizeof(char), 1, g->file);//escrevendo o delimitador anterior ao registro
 		WriteReg_Delimitador(r, g->file);//escrevendo no registro
 	}
@@ -486,7 +492,7 @@ void firstFit(Group *g, Registro_Delimitador *r){
 //Realiza a insercao de r no arquivo g->file utilizando o metodo best fit, e atualiza g->array(indices) e g->length
 void bestFit(Group *g, Registro_Delimitador *r){
 	RemList *rem = criar_lista(g->file);
-	Node *aux = rem->inicio, *aux_ant = rem->inicio, *atual, *passado = NULL;
+	Node *aux = rem->inicio, *aux_ant = rem->inicio;
 	//aux eh utilizado para percorrer os nodes dos removidos
 	//passado eh o anterio de aux
 	//atual eh o candidato atual a ser inserido
@@ -495,32 +501,16 @@ void bestFit(Group *g, Registro_Delimitador *r){
 	int tam_r = sizeReg(r);//tamanho em bytes de r que serao necessarios para a insercao
 	char breaker = '~';//usado para escrever no arquivo antes de escrever r, ao encontrar a posicao de insercao
 	long int menor;//menor diferenca entre o espaco possivel e tam_r
-
-	atual = aux;//atual inicia como sendo o primeiro removido
+	int int_aux;
+	
 
 	//buscando o node(o espaco removido logicamente) a ser inserido
-	if(aux != NULL){//se aux == NULL nao adianta procurar condidatos possiveis
-		menor = atual->tamanho;//o menor do momento eh o inicial
-
-		while(aux->proximo != NULL){//percorrendo toda a lista de removidos
-			if(menor > aux->proximo->tamanho - tam_r){
-				//se a variavel menor for maior que a diferenca do node aux->proximo e tam_r entao este eh o menor
-				menor = aux->proximo->tamanho - tam_r;
-				atual = aux->proximo;
-				aux_ant = aux;
-			}
-			passado = aux;
-			aux = aux->proximo;
-		}
-	
-		if(menor > aux->tamanho - tam_r){//conferindo ultimo no
-			menor = aux->tamanho - tam_r;
-			atual = aux;
-			aux_ant = passado;
-		}
+	while(aux != NULL && aux->tamanho < tam_r + 13){
+		aux_ant = aux;
+		aux = aux->proximo;
 	}
 
-	if(atual == NULL){//se nao ha espacos colocar no fim do arquivo
+	if(aux == NULL){//se nao ha espacos colocar no fim do arquivo
 		fseek(g->file, 0, SEEK_END);
 		WriteReg_Delimitador(r, g->file);
 	}else{//senao colocar no primerio espaco possivel encontrado
@@ -533,9 +523,15 @@ void bestFit(Group *g, Registro_Delimitador *r){
 			fseek(g->file, aux_ant->offset + 5, SEEK_SET);
 			fwrite(&(aux->proximo->offset), sizeof(long int), 1, g->file);
 		}
-
+		
+		//atualizando o novo tamanho do espaco restante
+		fseek(g->file, aux->offset + 1, SEEK_SET);
+		int_aux = aux->tamanho - tam_r - 1;
+		fwrite(&int_aux, sizeof(int), 1, g->file);
+		
 		//posicionando para a insercao do registro
 		fseek(g->file, aux->offset + (aux->tamanho - tam_r - 1), SEEK_SET);
+		aux->tamanho = aux->tamanho - tam_r - 1;
 		fwrite(&breaker, sizeof(char), 1, g->file);//escrevendo o delimitador anterior ao registro
 		WriteReg_Delimitador(r, g->file);//escrevendo no registro
 	}
@@ -546,10 +542,9 @@ void bestFit(Group *g, Registro_Delimitador *r){
 	qsort(g->array, g->length, sizeof(ChPrim), compare); // ordena o array
 }
 
-//Realiza a insercao de r no arquivo g->file utilizando o metodo worst fit, e atualiza g->array(indices) e g->length
 void worstFit(Group *g, Registro_Delimitador *r){
         RemList *rem = criar_lista(g->file);
-        Node *aux = rem->inicio, *aux_ant = rem->inicio, *atual = NULL, *passado = NULL;
+        Node *aux = rem->inicio, *aux_ant = rem->inicio;
 	//aux eh utilizado para percorrer os nodes dos removidos
 	//passado eh o anterio de aux
 	//atual eh o candidato atual a ser inserido
@@ -558,32 +553,11 @@ void worstFit(Group *g, Registro_Delimitador *r){
 	int tam_r = sizeReg(r);//tamanho em bytes de r que serao necessarios para a insercao
 	char breaker = '~';//usado para escrever no arquivo antes de escrever r, ao encontrar a posicao de insercao
 	long int maior = 0;//maior diferenca entre o espaco possivel e tam_r
-        
-	atual = aux;//atual inicia como sendo o primeiro removido
+	int int_aux;        
 
-	//buscando o node(o espaco removido logicamente) a ser inserido	
-	if(aux != NULL){
-		maior = atual->tamanho;//seta o maior como sendo o primeiro
+	if(aux->tamanho < tam_r + 13) aux == NULL;
 
-		while(aux->proximo != NULL){//percorrendo a lista de removidos
-			if(maior < aux->proximo->tamanho - tam_r){
-				//se a variavel maior for menor do que a diferenca de aux->proximo e tam_r entao este eh o maior
-				maior = aux->proximo->tamanho - tam_r;
-				atual = aux->proximo;
-				aux_ant = aux;
-			}
-			passado = aux;//conferindo ultimo no
-			aux = aux->proximo;
-		}
-	
-		if(maior < aux->tamanho - tam_r){
-			maior = aux->tamanho - tam_r;
-			atual = aux;
-			aux_ant = passado;
-		}
-	}
-	
-	if(atual == NULL){//se nao ha espacos colocar no fim do arquivo
+	if(aux == NULL){//se nao ha espacos colocar no fim do arquivo
 		fseek(g->file, 0, SEEK_END);
 		WriteReg_Delimitador(r, g->file);
 	}else{//senao colocar no primerio espaco possivel encontrado
@@ -596,9 +570,15 @@ void worstFit(Group *g, Registro_Delimitador *r){
 			fseek(g->file, aux_ant->offset + 5, SEEK_SET);
 			fwrite(&(aux->proximo->offset), sizeof(long int), 1, g->file);
 		}
+		
+		//atualizando o novo tamanho do espaco restante
+		fseek(g->file, aux->offset + 1, SEEK_SET);
+		int_aux = aux->tamanho - tam_r - 1;
+		fwrite(&int_aux, sizeof(int), 1, g->file);
 
 		//posicionando para a insercao do registro
 		fseek(g->file, aux->offset + (aux->tamanho - tam_r - 1), SEEK_SET);
+		aux->tamanho = aux->tamanho - tam_r - 1;
 		fwrite(&breaker, sizeof(char), 1, g->file);//escrevendo o delimitador anterior ao registro
 		WriteReg_Delimitador(r, g->file);//escrevendo no registro
 	}
@@ -608,6 +588,7 @@ void worstFit(Group *g, Registro_Delimitador *r){
 	g->array[g->length - 1].offset = ftell(g->file) - tam_r;
         qsort(g->array, g->length, sizeof(ChPrim), compare); // ordena o array
 }
+
 
 // Pega o indice que estava em disco e coloca em um array.
 void readIndex(Group* g, char* f_name) {
