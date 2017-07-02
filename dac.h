@@ -26,28 +26,6 @@ typedef struct group {
 
 
 
-typedef struct node{
-	long int offset;
-	long int tamanho;
-	long int prox;
-	struct node *proximo;
-}Node;
-	
-
-typedef struct remlist{
-	Node *inicio;
-	Node *fim;
-	int cont;
-
-}RemList;
-
-
-
-RemList *criar_lista(FILE * f);
-void apagar_lista(RemList *l);
-int lista_vazia(RemList *l);
-void inserir_lista(RemList *l, long int offset, long int tam, long int prox);
-void print_lista(RemList* l);
 
 
 
