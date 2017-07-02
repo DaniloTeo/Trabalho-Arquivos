@@ -6,6 +6,7 @@
 
 #include "Registro_Delimitador.h"
 #include "dac.h"
+#include "lista.h"
 
 
 #define NOA 3 //numero de arquivos de saida gerados
@@ -44,9 +45,7 @@ int main(void){
 	g[2].file = fopen("arquivo_de_saida_3.bin", "r+b");
 	readIndex(&g[2], "indice_3.bin");
 	
-	for(i = 0; i < 3; i++){
-		l[i] = criar_lista(g[i].file, i);
-	}
+	
 
 
 
@@ -125,6 +124,9 @@ int main(void){
 
 				aux--;
 
+				for(i = 0; i < 3; i++){
+					l[i] = criar_lista(g[i].file, i);
+				}
 				
 
 				if(l[0]->cont != 0 || l[1]->cont != 0 || l[2]->cont != 0){
