@@ -43,6 +43,11 @@ int main(void){
 	readIndex(&g[1], "indice_2.bin");
 	g[2].file = fopen("arquivo_de_saida_3.bin", "r+b");
 	readIndex(&g[2], "indice_3.bin");
+	
+	for(i = 0; i < 3; i++){
+		l[i] = criar_lista(g[i].file, i);
+	}
+
 
 
 	printf("Voce deseja:\n0- apagar um registro dos arquivos;\n1 - inserir um registro nos arquivos;\n2 - visualizar estatisticas dos arquivos indice;\n3 - visualizar estatisticas da lista de registros removidos;\n4 - sair.\n");
@@ -120,9 +125,7 @@ int main(void){
 
 				aux--;
 
-				for(i = 0; i < 3; i++){
-					l[i] = criar_lista(g[i].file);
-				}
+				
 
 				if(l[0]->cont != 0 || l[1]->cont != 0 || l[2]->cont != 0){
 					imprime_tabela_all(l[0], l[1], l[2]);
