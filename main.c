@@ -73,6 +73,36 @@ int main(void){
 				break;
 			case 1:
 				//insercao de registros
+				printf("Insira os parametros do registro\n");
+				printf("Digite um dominio: ");
+				scanf("%ls", r->dominio);
+
+				printf("Digite um documento: ");
+				scanf("%s", r->documento);
+
+				printf("Digite um nome: ");
+				scanf("%ls", r->nome);
+				
+				printf("Digite um uf: ");
+				scanf("%ls", r->uf);
+
+				printf("Digite um cidade: ");
+				scanf("%ls", r->cidade);
+				
+				printf("Digite um data_cadastro: ");
+				scanf("%s", r->data_cadastro);
+
+				printf("Digite um ticket: ");
+				scanf("%ld", &(r->ticket));
+
+				printf("%ls\n", r->cidade);
+
+
+				firstFit(&(g[0]), r);
+				bestFit(&(g[1]), r);
+				worstFit(&(g[2]), r);
+
+				break;
 				break;
 			case 2:
 				showThreeStatuses(g);
