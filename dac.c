@@ -595,6 +595,35 @@ void showThreeStatuses(Group g[3]){
 	free(aux);
 }
 
+// Passa lista de remocao para arquivo.
+void RemListToFile(Group* g, RemList* rem) {
+
+	Node* p = rem->inicio;
+	
+
+	fseek(g->file, 0, SEEK_SET);
+	// se lista vazia, escreve -1 no cabecalho
+	if (p == NULL) {
+		long int fim = -1;
+		fwrite(&fim, sizeof(long int), 1, g->file);
+		return;
+	}
+	// se lista nao vazia, escreve o offset do 1o elemento da lista
+	fwrite(&p->offset, sizeof(long int), 1, g->file);
+
+	// loop para atualizar o registros removidos logicamente em disco
+	// cada iteracao consiste de (1) ir ate offset do Node correspondente ao registro;
+	// (2) escrever o novo tamanho; (3) escrever o novo prox_offset;
+	while(p != NULL){
+		fseek(g->file, p->offset + 1, SEEK_SET);
+		fwrite(&p->tamanho, sizeof(int), 1, g->file);
+		fwrite(&p->prox, sizeof(long int), 1, g->file);
+		p = p->proximo;
+	}
+
+	return;
+}
+
 // int main() {
 
 // 	setlocale(LC_ALL, "pt_BR.ISO-8859-1");
